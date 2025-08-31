@@ -1,5 +1,5 @@
 import { Employer, LMIAApproval } from '../types/lmia';
-import { loadLMIAData } from './comprehensiveDataLoader';
+import { loadComprehensiveLMIAData } from './comprehensiveDataLoader';
 
 // Viewport bounds interface
 export interface ViewportBounds {
@@ -73,7 +73,8 @@ export async function loadViewportData(
   // Load full dataset if not cached or year/quarter changed
   if (!cachedData[cacheKey] || currentYear !== year || currentQuarter !== quarter) {
     console.log(`Loading full dataset for ${year} ${quarter}`);
-    const fullData = await loadLMIAData(year, quarter);
+    const employers = await loadComprehensiveLMIAData();
+    const fullData = { employers, approvals: [] };
     cachedData[cacheKey] = fullData;
     currentYear = year;
     currentQuarter = quarter;

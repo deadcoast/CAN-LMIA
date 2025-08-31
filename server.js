@@ -138,8 +138,223 @@ function extractPostalCode(address) {
   return postalCodeMatch ? postalCodeMatch[0] : '';
 }
 
-// Enhanced coordinate mapping function with more cities
+// Function to search for city coordinates in the Canadian Geographic Names Database CSV
+function findCityInGeoNames(csvContent, province, city) {
+  const lines = csvContent.split('\n');
+  
+  // Priority order for populated place types (higher priority = better match)
+  const populatedPlacePriority = {
+    'City': 100,
+    'Town': 90,
+    'Municipality': 85,
+    'District Municipality': 80,
+    'Village Municipality': 75,
+    'Township Municipality': 70,
+    'Village': 65,
+    'Urban Community': 60,
+    'Community': 55,
+    'Hamlet': 50,
+    'Organized Hamlet': 45,
+    'Compact Rural Community': 40,
+    'Dispersed Rural Community': 35,
+    'Locality': 30,
+    'Named Locality': 25,
+    'Settlement': 20,
+    'Railway Point': 15,
+    'Post Office': 10,
+    'Residential Area': 5,
+    'Neighbourhood': 1
+  };
+  
+  let bestMatch = null;
+  let bestScore = -1;
+  
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    
+    // Simple CSV parsing - split by comma and handle quoted fields
+    const columns = parseCSVLine(line);
+    if (columns.length < 15) continue;
+    
+    const name = columns[1].replace(/'/g, '');
+    const genericTerm = columns[5];
+    const csvProvince = columns[12];
+    const latitude = parseFloat(columns[9]);
+    const longitude = parseFloat(columns[10]);
+    const relevance = parseInt(columns[13]) || 0;
+    
+    // Check if it's a populated place and matches our city/province
+    if (isPopulatedPlace(genericTerm) && 
+        name.toLowerCase() === city.toLowerCase() && 
+        csvProvince.toLowerCase() === province.toLowerCase()) {
+      
+      const priority = populatedPlacePriority[genericTerm] || 0;
+      const score = priority + (relevance / 1000000); // Add relevance as tiebreaker
+      
+      if (score > bestScore) {
+        bestMatch = { latitude, longitude };
+        bestScore = score;
+      }
+    }
+  }
+  
+  return bestMatch;
+}
+
+// Simple CSV line parser
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  
+  result.push(current);
+  return result;
+}
+
+// Check if a category represents a populated place
+function isPopulatedPlace(category) {
+  const populatedPlaceTypes = [
+    'City', 'Town', 'Municipality', 'District Municipality', 'Village Municipality', 
+    'Township Municipality', 'Village', 'Urban Community', 'Community', 'Hamlet', 
+    'Organized Hamlet', 'Compact Rural Community', 'Dispersed Rural Community', 
+    'Locality', 'Named Locality', 'Settlement', 'Railway Point', 'Post Office', 
+    'Residential Area', 'Neighbourhood'
+  ];
+  return populatedPlaceTypes.includes(category);
+}
+
+// Priority order for populated place types (higher priority = better match)
+function getPlacePriority(genericTerm) {
+  const populatedPlacePriority = {
+    'City': 100,
+    'Town': 90,
+    'Municipality': 85,
+    'District Municipality': 80,
+    'Village Municipality': 75,
+    'Township Municipality': 70,
+    'Village': 65,
+    'Urban Community': 60,
+    'Community': 55,
+    'Hamlet': 50,
+    'Organized Hamlet': 45,
+    'Compact Rural Community': 40,
+    'Dispersed Rural Community': 35,
+    'Locality': 30,
+    'Named Locality': 25,
+    'Settlement': 20,
+    'Railway Point': 15,
+    'Post Office': 10,
+    'Residential Area': 5,
+    'Neighbourhood': 1
+  };
+  return populatedPlacePriority[genericTerm] || 0;
+}
+
+// Global cache for Canadian Geographic Names Database
+let geoNamesCache = null;
+let geocodingResultsCache = {};
+
+// Load Canadian Geographic Names Database at startup
+function loadGeoNamesDatabase() {
+  try {
+    console.log('Loading Canadian Geographic Names Database...');
+    const csvPath = path.join(__dirname, 'public/data/CAN_GEO_NAMES/Canadian_Geo_Names.csv');
+    const csvContent = fs.readFileSync(csvPath, 'utf-8');
+    
+    // Parse and index the CSV data for fast lookup
+    const lines = csvContent.split('\n');
+    geoNamesCache = new Map();
+    
+    // Skip header line
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      
+      const columns = parseCSVLine(line);
+      if (columns.length < 15) continue;
+      
+      const name = columns[1].replace(/'/g, '');
+      const genericTerm = columns[5];
+      const csvProvince = columns[12];
+      const latitude = parseFloat(columns[9]);
+      const longitude = parseFloat(columns[10]);
+      const relevance = parseInt(columns[13]) || 0;
+      
+      // Only index populated places
+      if (isPopulatedPlace(genericTerm)) {
+        const key = `${csvProvince.toLowerCase()}-${name.toLowerCase()}`;
+        if (!geoNamesCache.has(key)) {
+          geoNamesCache.set(key, []);
+        }
+        geoNamesCache.get(key).push({
+          latitude,
+          longitude,
+          name,
+          province: csvProvince,
+          genericTerm,
+          relevance
+        });
+      }
+    }
+    
+    console.log(`Loaded ${geoNamesCache.size} unique location keys from Canadian Geographic Names Database`);
+  } catch (error) {
+    console.warn('Failed to load Canadian Geographic Names Database:', error);
+    geoNamesCache = null;
+  }
+}
+
+// Enhanced coordinate mapping function using Canadian Geographic Names Database
 function getCoordinates(province, city) {
+  // Use cached Canadian Geographic Names Database if available
+  if (geoNamesCache) {
+    const cacheKey = `${province.toLowerCase()}-${city.toLowerCase()}`;
+    
+    // Check if we already have this result cached
+    if (geocodingResultsCache[cacheKey]) {
+      return geocodingResultsCache[cacheKey];
+    }
+    
+    // Look up in the pre-loaded database
+    const matches = geoNamesCache.get(cacheKey);
+    if (matches && matches.length > 0) {
+      // Find the best match based on priority and relevance
+      let bestMatch = null;
+      let bestScore = -1;
+      
+      for (const match of matches) {
+        const priority = getPlacePriority(match.genericTerm);
+        const score = priority + (match.relevance / 1000000);
+        
+        if (score > bestScore) {
+          bestMatch = match;
+          bestScore = score;
+        }
+      }
+      
+      if (bestMatch) {
+        const result = { lat: bestMatch.latitude, lng: bestMatch.longitude };
+        geocodingResultsCache[cacheKey] = result;
+        return result;
+      }
+    }
+  }
+  
+  // Fallback to static coordinate mapping
   const coordinates = {
     'Ontario': { 
       'Toronto': { lat: 43.6532, lng: -79.3832 },
@@ -494,4 +709,7 @@ app.listen(PORT, () => {
   console.log(`   GET /api/employers - Get viewport-filtered employers`);
   console.log(`   GET /api/available-data - Get available years/quarters`);
   console.log(`   GET /api/health - Health check`);
+  
+  // Load Canadian Geographic Names Database at startup
+  loadGeoNamesDatabase();
 });

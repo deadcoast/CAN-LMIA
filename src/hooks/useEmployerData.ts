@@ -1,13 +1,13 @@
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { FilterState, Statistics, EmployerWithApprovals } from '../types/lmia';
 // Removed mockData import - using real data only
-import { loadLMIAData, getAvailableData } from '../data/comprehensiveDataLoader';
+import { loadComprehensiveLMIAData } from '../data/comprehensiveDataLoader';
 import { loadServerData, checkServerHealth, ViewportBounds } from '../data/serverDataLoader';
 
 // Get available data to set initial filters (will be updated from server)
-const availableData = getAvailableData();
-const latestYear = Math.max(...availableData.years);
-const latestQuarters = availableData.quarters[latestYear] || [];
+const availableYears = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+const latestYear = Math.max(...availableYears);
+const latestQuarters = ['Q1', 'Q2', 'Q3', 'Q4'];
 
 const initialFilters: FilterState = {
   year: latestYear,
@@ -70,7 +70,7 @@ export const useEmployerData = () => {
           } catch (err) {
             console.error('Failed to load initial server data:', err);
             // Fall back to local data
-            const { employers: excelEmployers } = await loadLMIAData(filters.year, filters.quarter);
+            const excelEmployers = await loadComprehensiveLMIAData();
             if (excelEmployers.length > 0) {
               setEmployers(excelEmployers);
               setAllEmployers(excelEmployers);
@@ -84,7 +84,7 @@ export const useEmployerData = () => {
         } else {
           console.log('Server not available, falling back to local data loading');
           // Load local data as fallback
-          const { employers: excelEmployers } = await loadLMIAData(filters.year, filters.quarter);
+          const excelEmployers = await loadComprehensiveLMIAData();
           
           if (excelEmployers.length > 0) {
             setEmployers(excelEmployers);

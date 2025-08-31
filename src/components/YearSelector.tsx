@@ -1,6 +1,8 @@
 import React from 'react';
 import { Calendar, ChevronDown } from 'lucide-react';
-import { getAvailableData } from '../data/comprehensiveDataLoader';
+// Available data configuration
+const availableYears = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+const availableQuarters = ['Q1', 'Q2', 'Q3', 'Q4'];
 
 interface YearSelectorProps {
   selectedYear: number;
@@ -15,8 +17,7 @@ const YearSelector: React.FC<YearSelectorProps> = ({
   onYearChange,
   onQuarterChange
 }) => {
-  const { years, quarters } = getAvailableData();
-  const availableQuarters = quarters[selectedYear] || [];
+  const years = availableYears;
   return (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 p-4">
       <div className="flex items-center space-x-4">
