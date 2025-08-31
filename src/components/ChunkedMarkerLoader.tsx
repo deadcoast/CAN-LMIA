@@ -116,6 +116,7 @@ const ChunkedMarkerLoader: React.FC<ChunkedMarkerLoaderProps> = ({
         }
         
         marker.bindPopup(popupContent);
+        
         map.addLayer(marker);
         markersRef.current.push(marker);
       });
@@ -154,6 +155,8 @@ const ChunkedMarkerLoader: React.FC<ChunkedMarkerLoaderProps> = ({
         onEmployerSelect(employer);
       }
     };
+
+
 
     return () => {
       // Cleanup animation frame

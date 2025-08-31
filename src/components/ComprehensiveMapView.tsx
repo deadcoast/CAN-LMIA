@@ -43,7 +43,7 @@ const ComprehensiveMapView: React.FC<ComprehensiveMapViewProps> = ({
 
   
   // Import and use clustering worker
-  const { clusterData, aggregateData, isWorkerReady: workerReady } = useClusteringWorker();
+  const { clusterData, isWorkerReady: workerReady } = useClusteringWorker();
 
   // Update worker ready state
   useEffect(() => {
@@ -60,7 +60,7 @@ const ComprehensiveMapView: React.FC<ComprehensiveMapViewProps> = ({
   }, []);
 
   // Throttle viewport updates to prevent infinite loops
-  const viewportUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const viewportUpdateTimeoutRef = useRef<number | null>(null);
   
   const throttledViewportUpdate = useCallback((bounds: any, zoom: number) => {
     if (viewportUpdateTimeoutRef.current) {
@@ -125,12 +125,13 @@ const ComprehensiveMapView: React.FC<ComprehensiveMapViewProps> = ({
   };
 
   return (
-    <div className="h-full w-full relative bg-gray-100 rounded-lg overflow-hidden shadow-inner">
+    <div className="h-full w-full relative bg-gray-100 rounded-lg shadow-inner">
       <MapContainer
         center={[56.1304, -106.3468]} // Geographic center of Canada
         zoom={4}
         className="h-full w-full"
         ref={mapRef}
+        preferCanvas={false}
         whenReady={() => {
           if (mapRef.current) {
             mapRef.current.on('zoomend', handleZoomEnd);
@@ -254,7 +255,7 @@ const ComprehensiveMapView: React.FC<ComprehensiveMapViewProps> = ({
               <span>Heat map density</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className={`w-2 h-2 rounded-full ${isWorkerReady ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
+              <div className={`w-2 h-2 rounded-full ${isWorkerReady ? 'bg-green-500' : 'bg-yellow-500'}`} />
               <span>Web Workers</span>
             </div>
           </div>

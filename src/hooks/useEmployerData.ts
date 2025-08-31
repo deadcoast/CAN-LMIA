@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { FilterState, Statistics, EmployerWithApprovals } from '../types/lmia';
 // Removed mockData import - using real data only
 import { loadLMIAData, getAvailableData } from '../data/comprehensiveDataLoader';
-import { loadServerData, getServerAvailableData, checkServerHealth, ViewportBounds } from '../data/serverDataLoader';
+import { loadServerData, checkServerHealth, ViewportBounds } from '../data/serverDataLoader';
 
 // Get available data to set initial filters (will be updated from server)
 const availableData = getAvailableData();

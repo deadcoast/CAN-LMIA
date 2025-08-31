@@ -77,6 +77,8 @@ const MarkerClusterGroup: React.FC<MarkerClusterGroupProps> = ({ employers, onEm
           onEmployerSelect(employer);
         }
       };
+
+
     });
 
     return () => {

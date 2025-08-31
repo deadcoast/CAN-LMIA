@@ -103,7 +103,7 @@ const MapPage: React.FC = () => {
           </div>
 
           {/* Map Container */}
-          <div className="flex-1 p-4 min-h-0">
+          <div className="flex-1 p-4">
             <ComprehensiveMapView
               employers={employers}
               onEmployerSelect={setSelectedEmployer}

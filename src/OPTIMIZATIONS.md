@@ -339,15 +339,14 @@ Users always know the full scope of the data. The numbers on clusters represent 
 
 This is how Google Maps shows millions of businesses - you see the density, just not 1 million individual pins at once (which would be a useless blob anyway).
 
-
 ----
-
 
 You can absolutely test server-side tile generation in development! You don't need a web host - you'll run everything locally. Here's how:
 
 ## Understanding Server-Side Tiles
 
 First, let me clarify what this means: instead of sending all 15k points to the browser, your local server will:
+
 1. Pre-process the data into "tiles" (small chunks based on geographic areas)
 2. Only send the tiles that are currently visible on the map
 
@@ -396,6 +395,7 @@ app.listen(3001, () => {
 ```
 
 Your frontend code:
+
 ```javascript
 // In your map component
 async function updateMapData() {
@@ -424,26 +424,29 @@ map.on('moveend', updateMapData);
 This serves actual vector tiles locally:
 
 1. Install TileServer GL:
-```bash
-npm install -g tileserver-gl-light
-```
+
+    ```bash
+    npm install -g tileserver-gl-light
+    ```
 
 2. Convert your data to MBTiles format using Tippecanoe:
-```bash
-# Install tippecanoe (on Mac)
-brew install tippecanoe
 
-# Convert your GeoJSON to vector tiles
-tippecanoe -o lmia_2025.mbtiles \
-  -z14 -Z4 \
-  --drop-densest-as-needed \
-  lmia_2025.geojson
-```
+    ```bash
+    # Install tippecanoe
+    brew install tippecanoe
+
+    # Convert your GeoJSON to vector tiles
+    tippecanoe -o lmia_2025.mbtiles \
+    -z14 -Z4 \
+    --drop-densest-as-needed \
+    lmia_2025.geojson
+    ```
 
 3. Run the tile server locally:
-```bash
-tileserver-gl-light lmia_2025.mbtiles
-```
+
+    ```bash
+    tileserver-gl-light lmia_2025.mbtiles
+    ```
 
 This starts a server at `http://localhost:8080` that serves vector tiles.
 
@@ -482,6 +485,7 @@ def get_employers(north: float, south: float, east: float, west: float, zoom: in
 Here's a complete working example you can test right now:
 
 **1. Create `package.json`:**
+
 ```json
 {
   "name": "lmia-map-server",
@@ -496,6 +500,7 @@ Here's a complete working example you can test right now:
 ```
 
 **2. Create `server.js`:**
+
 ```javascript
 const express = require('express');
 const cors = require('cors');
@@ -539,12 +544,14 @@ app.listen(3001, () => {
 ```
 
 **3. Install and run:**
+
 ```bash
 npm install
 npm start
 ```
 
 **4. Update your frontend to fetch from this local server:**
+
 ```javascript
 // Instead of loading all data at once
 const bounds = map.getBounds();

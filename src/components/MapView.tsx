@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { EmployerWithApprovals } from '../types/lmia';
-import MarkerClusterGroup from './MarkerClusterGroup';
+// import MarkerClusterGroup from './MarkerClusterGroup';
 import SimpleMarkers from './SimpleMarkers';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
@@ -41,8 +41,8 @@ const MapUpdater: React.FC<{ employers: EmployerWithApprovals[] }> = ({ employer
   useEffect(() => {
     if (employers.length > 0) {
       // Fit bounds to show all employers
-      const group = new window.L.featureGroup(
-        employers.map(emp => window.L.marker([emp.latitude, emp.longitude]))
+      const group = (window as any).L.featureGroup(
+        employers.map(emp => (window as any).L.marker([emp.latitude, emp.longitude]))
       );
       map.fitBounds(group.getBounds().pad(0.1));
     }

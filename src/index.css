@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Fix Leaflet popup positioning */
+.leaflet-popup-pane,
+.leaflet-popup,
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  z-index: 9999 !important;
+}

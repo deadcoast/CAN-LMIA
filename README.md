@@ -26,6 +26,8 @@ The LMIA Database is a sophisticated web application designed to visualize and a
 - **Advanced Filtering**: Search and filter by location, occupation, program type, and time period
 - **Responsive Design**: Modern, mobile-friendly interface built with Tailwind CSS
 - **Real-time Updates**: Dynamic data loading with viewport-based optimization
+- **One-Command Startup**: Automated scripts for easy development setup
+- **Cross-Platform**: Works seamlessly on macOS, Linux, and Windows
 
 ## Screenshots
 
@@ -62,20 +64,48 @@ The LMIA Database is a sophisticated web application designed to visualize and a
    npm install
    ```
 
-3. **Start the development servers**
+3. **Start the application (Recommended)**
 
    ```bash
-   # Terminal 1: Start the backend server
-   node server.js
+   # One-command startup (automatically starts both servers)
+   ./start.sh          # macOS/Linux
+   start.bat           # Windows
    
-   # Terminal 2: Start the frontend development server
-   npm run dev
+   # Or using npm scripts
+   npm run start:all   # macOS/Linux
+   npm run start:all:win # Windows
    ```
 
 4. **Access the application**
 
-   - Frontend: [PORT 5173](http://localhost:5173)
-   - Backend API: [PORT 3001](http://localhost:3001)
+   - Frontend: [http://localhost:5173](http://localhost:5173)
+   - Backend API: [http://localhost:3001](http://localhost:3001)
+
+### Alternative: Manual Startup
+
+If you prefer to start servers manually:
+
+```bash
+# Terminal 1: Start the backend server
+npm start
+
+# Terminal 2: Start the frontend development server
+npm run dev
+```
+
+## 🚀 Automated Startup Features
+
+The project includes powerful startup scripts that handle everything automatically:
+
+- ✅ **Dependency Check**: Verifies Node.js and npm installation
+- ✅ **Auto-Install**: Runs `npm install` if needed
+- ✅ **Port Management**: Automatically kills existing processes on ports 3001 and 5173
+- ✅ **Health Monitoring**: Waits for both servers to be ready
+- ✅ **Auto-Open Browser**: Opens the application automatically
+- ✅ **Comprehensive Logging**: Creates detailed log files for debugging
+- ✅ **Clean Shutdown**: Properly stops all processes on exit
+
+For detailed startup information, see [STARTUP.md](STARTUP.md).
 
 ## Architecture
 
@@ -87,6 +117,7 @@ The LMIA Database is a sophisticated web application designed to visualize and a
 - **Tailwind CSS** for responsive, utility-first styling
 - **Recharts** for data visualization and analytics
 - **React Router** for client-side routing
+- **Lucide React** for modern iconography
 
 ### Backend Stack
 
@@ -101,6 +132,7 @@ The LMIA Database is a sophisticated web application designed to visualize and a
 - **Viewport-based filtering** to load only visible data
 - **Chunked loading** to prevent UI blocking
 - **Canvas rendering** for high-performance marker display
+- **Throttled updates** to prevent infinite API loops
 
 ## Project Structure
 
@@ -111,25 +143,37 @@ can-lmia/
 │       └── LMIA-DATA/           # Excel data files by year/quarter
 ├── src/
 │   ├── components/              # React components
-│   │   ├── ComprehensiveMapView.tsx
-│   │   ├── ChunkedMarkerLoader.tsx
-│   │   ├── CanvasMarkerRenderer.tsx
-│   │   ├── HeatmapRenderer.tsx
-│   │   └── StatisticsPanel.tsx
+│   │   ├── ComprehensiveMapView.tsx    # Main map component
+│   │   ├── ChunkedMarkerLoader.tsx     # Chunked marker loading
+│   │   ├── CanvasMarkerRenderer.tsx    # High-performance rendering
+│   │   ├── HeatmapRenderer.tsx         # Heat map visualization
+│   │   ├── MarkerClusterGroup.tsx      # Client-side clustering
+│   │   ├── StatisticsPanel.tsx         # Statistics dashboard
+│   │   ├── FilterPanel.tsx             # Advanced filtering
+│   │   ├── EmployerModal.tsx           # Employer details modal
+│   │   └── PerformanceIndicator.tsx    # Performance metrics
 │   ├── hooks/                   # Custom React hooks
-│   │   ├── useEmployerData.ts
-│   │   └── useClusteringWorker.ts
+│   │   ├── useEmployerData.ts          # Main data management
+│   │   └── useClusteringWorker.ts      # Web Worker integration
 │   ├── data/                    # Data processing modules
-│   │   ├── comprehensiveDataLoader.ts
-│   │   └── serverDataLoader.ts
+│   │   ├── comprehensiveDataLoader.ts  # Local data processing
+│   │   ├── serverDataLoader.ts         # Server API integration
+│   │   └── viewportDataLoader.ts       # Viewport-based loading
 │   ├── workers/                 # Web Workers
-│   │   └── clusteringWorker.ts
+│   │   └── clusteringWorker.ts         # Background clustering
 │   ├── types/                   # TypeScript type definitions
-│   │   └── lmia.ts
+│   │   └── lmia.ts                    # Core data types
+│   ├── utils/                   # Utility functions
+│   │   ├── LMIAMapManager.ts          # Map management
+│   │   └── excelReader.ts             # Excel processing
 │   └── pages/                   # Page components
-│       ├── MapPage.tsx
-│       └── StatisticsPage.tsx
+│       ├── MapPage.tsx                # Main map page
+│       └── StatisticsPage.tsx         # Statistics page
+├── scripts/                     # Utility scripts
+│   └── convertToGeoJSON.js            # Data conversion
 ├── server.js                    # Express.js backend server
+├── start.sh / start.bat         # Automated startup scripts
+├── stop.sh / stop.bat           # Cleanup scripts
 └── package.json
 ```
 
@@ -153,14 +197,27 @@ DATA_PATH=./public/data/LMIA-DATA
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/api/health` | GET | Server health check |
-| `/api/employers` | GET | Get filtered employer data |
+| `/api/employers` | GET | Get filtered employer data with viewport clustering |
 | `/api/available-data` | GET | Get available years/quarters |
+
+### npm Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start frontend development server |
+| `npm start` | Start backend server |
+| `npm run start:all` | Start both servers (macOS/Linux) |
+| `npm run start:all:win` | Start both servers (Windows) |
+| `npm run stop` | Stop all servers (macOS/Linux) |
+| `npm run stop:win` | Stop all servers (Windows) |
+| `npm run build` | Build for production |
+| `npm run lint` | Run ESLint |
 
 ## Data Sources
 
 The application processes Canadian Labour Market Impact Assessment data from official government sources:
 
-- **Format**: Excel (.xlsx) files
+- **Format**: Excel (.xlsx) and CSV files
 - **Coverage**: 2015-2025 (quarterly data)
 - **Records**: 17,839+ employers
 - **Fields**: Employer details, locations, positions, programs, occupations
@@ -171,6 +228,7 @@ The application processes Canadian Labour Market Impact Assessment data from off
 2. **Geocoding**: Address-to-coordinates conversion for mapping
 3. **Clustering**: Server-side clustering for performance optimization
 4. **API Serving**: RESTful endpoints with viewport filtering
+5. **Real-time Updates**: Dynamic data loading based on map viewport
 
 ## Features Deep Dive
 
@@ -180,6 +238,8 @@ The application processes Canadian Labour Market Impact Assessment data from off
 - **Performance Optimization**: Web Workers handle clustering calculations
 - **Real-time Filtering**: Viewport-based data loading
 - **Custom Markers**: Program-specific marker styling and colors
+- **Popup System**: Native Leaflet popups with proper z-index handling
+- **Heat Map Mode**: Density visualization for large datasets
 
 ### Statistical Analysis
 
@@ -187,6 +247,7 @@ The application processes Canadian Labour Market Impact Assessment data from off
 - **Geographic Distribution**: Provincial and territorial breakdowns
 - **Occupation Analysis**: Top occupations and program distributions
 - **Time Series Data**: Quarterly and annual trends
+- **Virtualized Lists**: Efficient rendering of large datasets
 
 ### Performance Features
 
@@ -195,6 +256,25 @@ The application processes Canadian Labour Market Impact Assessment data from off
 - **Chunked Loading**: Progressive data loading for large datasets
 - **Canvas Rendering**: High-performance marker rendering
 - **Viewport Optimization**: Load only visible data
+- **Throttled Updates**: Prevents excessive API calls
+
+## Development
+
+### Code Quality
+
+- **TypeScript**: Full type safety throughout the application
+- **ESLint**: Code linting with React and TypeScript rules
+- **Prettier**: Consistent code formatting
+- **Error Handling**: Comprehensive error handling and logging
+
+### Recent Improvements
+
+- ✅ **Automated Startup Scripts**: One-command development setup
+- ✅ **Popup Z-Index Fix**: Resolved Leaflet popup layering issues
+- ✅ **TypeScript Error Resolution**: Fixed all compilation errors
+- ✅ **Performance Optimization**: Improved map rendering and data loading
+- ✅ **Cross-Platform Support**: Works on macOS, Linux, and Windows
+- ✅ **Comprehensive Logging**: Detailed logs for debugging
 
 ## Deployment
 
@@ -224,6 +304,26 @@ EXPOSE 3001
 CMD ["npm", "start"]
 ```
 
+## Troubleshooting
+
+### Common Issues
+
+1. **Port Already in Use**: The startup scripts automatically handle this
+2. **Dependencies Issues**: Run `npm install` to resolve
+3. **Server Won't Start**: Check `server.log` for detailed error messages
+4. **Map Not Loading**: Verify both frontend and backend servers are running
+
+### Log Files
+
+- **Backend Logs**: `server.log`
+- **Frontend Logs**: `frontend.log`
+
+View logs in real-time:
+```bash
+tail -f server.log    # Backend logs
+tail -f frontend.log  # Frontend logs
+```
+
 ## Contributing
 
 We welcome contributions! Please follow these steps:
@@ -241,6 +341,7 @@ We welcome contributions! Please follow these steps:
 - Write meaningful commit messages
 - Add tests for new features
 - Update documentation as needed
+- Test on multiple platforms (macOS, Linux, Windows)
 
 ## License
 
@@ -252,6 +353,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Leaflet** community for excellent mapping tools
 - **React** team for the amazing framework
 - **OpenStreetMap** contributors for map data
+- **Vite** team for the fast build tool
 
 ## Support
 

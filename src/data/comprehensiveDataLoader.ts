@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { Employer, LMIAApproval, EmployerWithApprovals } from '../types/lmia';
+import { LMIAApproval, EmployerWithApprovals } from '../types/lmia';
 
 // Data structure interfaces for different years
 interface BaseRow {
@@ -8,7 +8,6 @@ interface BaseRow {
   'Address': string;
   'Positions Approved'?: number;
   'Positions approved'?: number;
-  'Positions Approved'?: number;
   'Stream'?: string;
   'Occupations under NOC 2011'?: string;
   'Occupation'?: string;
@@ -159,16 +158,18 @@ function getCoordinates(province: string, city: string): { latitude: number; lon
   const cityKey = city || 'default';
   
   if (coordinates[prov] && coordinates[prov][cityKey]) {
-    return coordinates[prov][cityKey];
+    const coord = coordinates[prov][cityKey];
+    return { latitude: coord.lat, longitude: coord.lng };
   } else if (coordinates[prov] && coordinates[prov]['default']) {
-    return coordinates[prov]['default'];
+    const coord = coordinates[prov]['default'];
+    return { latitude: coord.lat, longitude: coord.lng };
   } else {
-    return { lat: 56.1304, lng: -106.3468 }; // Geographic center of Canada
+    return { latitude: 56.1304, longitude: -106.3468 }; // Geographic center of Canada
   }
 }
 
 // Parse CSV data
-function parseCSVData(csvContent: string, year: number, quarter: string): BaseRow[] {
+function parseCSVData(csvContent: string, _year: number, _quarter: string): BaseRow[] {
   const lines = csvContent.split('\n');
   const rows: BaseRow[] = [];
   
@@ -193,15 +194,15 @@ function parseCSVData(csvContent: string, year: number, quarter: string): BaseRo
     const values = line.split(',').map(v => v.replace(/"/g, '').trim());
     if (values.length < 3) continue;
     
-    const row: BaseRow = {};
+    const row: Partial<BaseRow> = {};
     headers.forEach((header, index) => {
       if (values[index]) {
-        row[header as keyof BaseRow] = values[index];
+        (row as any)[header] = values[index];
       }
     });
     
     if (row['Employer'] && row['Address']) {
-      rows.push(row);
+      rows.push(row as BaseRow);
     }
   }
   
@@ -209,7 +210,7 @@ function parseCSVData(csvContent: string, year: number, quarter: string): BaseRo
 }
 
 // Parse Excel data
-function parseExcelData(arrayBuffer: ArrayBuffer, year: number, quarter: string): BaseRow[] {
+function parseExcelData(arrayBuffer: ArrayBuffer, _year: number, _quarter: string): BaseRow[] {
   const workbook = XLSX.read(arrayBuffer, { type: 'array' });
   const sheetName = workbook.SheetNames[0];
   const worksheet = workbook.Sheets[sheetName];
@@ -238,15 +239,15 @@ function parseExcelData(arrayBuffer: ArrayBuffer, year: number, quarter: string)
     const row = jsonData[i] as (string | number)[];
     if (!row || row.length < 3) continue;
     
-    const rowData: BaseRow = {};
+    const rowData: Partial<BaseRow> = {};
     headers.forEach((header, index) => {
       if (row[index] !== undefined && row[index] !== '') {
-        rowData[header as keyof BaseRow] = String(row[index]);
+        (rowData as any)[header] = String(row[index]);
       }
     });
     
     if (rowData['Employer'] && rowData['Address']) {
-      rows.push(rowData);
+      rows.push(rowData as BaseRow);
     }
   }
   
@@ -301,15 +302,15 @@ function convertToStructuredData(rows: BaseRow[], year: number, quarter: string)
       program_stream: stream,
       occupation: occupation,
       noc_code: nocCode,
-      positions_approved: positions,
-      lmias_approved: 1
+      approved_positions: positions,
+      approved_lmias: 1
     });
   });
   
   // Calculate totals and populate approvals for each employer
   const employers = Array.from(employerMap.values()).map(employer => {
     const employerApprovals = approvals.filter(approval => approval.employer_id === employer.id);
-    const totalPositions = employerApprovals.reduce((sum, approval) => sum + approval.positions_approved, 0);
+    const totalPositions = employerApprovals.reduce((sum, approval) => sum + approval.approved_positions, 0);
     const totalLMIAs = employerApprovals.length;
     
     return {
@@ -340,7 +341,7 @@ export async function loadLMIAData(year: number, quarter: string): Promise<{ emp
     if (quarter === 'Q1-Q4' || quarter === 'Q1-Q2') {
       fileName = yearData.files[0]; // Use first file for full year or first half
     } else {
-      const quarterIndex = yearData.quarters.indexOf(quarter);
+      const quarterIndex = (yearData.quarters as readonly string[]).indexOf(quarter);
       if (quarterIndex >= 0 && quarterIndex < yearData.files.length) {
         fileName = yearData.files[quarterIndex];
       } else {
