@@ -14,30 +14,32 @@
 
 </div>
 
-## 📊 Overview
+## Overview
 
 The LMIA Database is a sophisticated web application designed to visualize and analyze Canadian Labour Market Impact Assessment data. Built with modern web technologies, it provides interactive mapping capabilities, comprehensive statistical analysis, and real-time data processing for over **17,000+ employers** across Canada.
 
 ### 🎯 Key Features
 
-- **🗺️ Interactive Mapping**: Real-time visualization of employer locations with advanced clustering
-- **📈 Statistical Dashboard**: Comprehensive analytics with charts and data visualizations  
-- **⚡ High Performance**: Optimized for handling large datasets with Web Workers and server-side processing
-- **🔍 Advanced Filtering**: Search and filter by location, occupation, program type, and time period
-- **📱 Responsive Design**: Modern, mobile-friendly interface built with Tailwind CSS
-- **🚀 Real-time Updates**: Dynamic data loading with viewport-based optimization
+- **Interactive Mapping**: Real-time visualization of employer locations with advanced clustering
+- **Statistical Dashboard**: Comprehensive analytics with charts and data visualizations  
+- **High Performance**: Optimized for handling large datasets with Web Workers and server-side processing
+- **Advanced Filtering**: Search and filter by location, occupation, program type, and time period
+- **Responsive Design**: Modern, mobile-friendly interface built with Tailwind CSS
+- **Real-time Updates**: Dynamic data loading with viewport-based optimization
 
-## 🖼️ Screenshots
+## Screenshots
 
 ### Interactive Map View
+
 ![LMIA Database Homepage](assets/LMIAhome.png)
 *Interactive map showing clustered employer data across Canada with real-time performance metrics*
 
 ### Statistical Dashboard
+
 ![LMIA Statistics Dashboard](assets/LMIAgraph.png)
 *Comprehensive statistics dashboard featuring labor market analytics, occupation distributions, and provincial breakdowns*
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -48,17 +50,20 @@ The LMIA Database is a sophisticated web application designed to visualize and a
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/can-lmia.git
    cd can-lmia
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Start the development servers**
+
    ```bash
    # Terminal 1: Start the backend server
    node server.js
@@ -68,12 +73,14 @@ The LMIA Database is a sophisticated web application designed to visualize and a
    ```
 
 4. **Access the application**
-   - Frontend: http://localhost:5173
-   - Backend API: http://localhost:3001
 
-## 🏗️ Architecture
+   - Frontend: [PORT 5173](http://localhost:5173)
+   - Backend API: [PORT 3001](http://localhost:3001)
+
+## Architecture
 
 ### Frontend Stack
+
 - **React 18** with TypeScript for type-safe development
 - **Vite** for fast development and optimized builds
 - **Leaflet** with React-Leaflet for interactive mapping
@@ -82,20 +89,22 @@ The LMIA Database is a sophisticated web application designed to visualize and a
 - **React Router** for client-side routing
 
 ### Backend Stack
+
 - **Node.js** with Express.js for API server
 - **XLSX** for Excel file processing
 - **CORS** enabled for cross-origin requests
 
 ### Performance Optimizations
+
 - **Web Workers** for background clustering calculations
 - **Server-side clustering** for efficient data processing
 - **Viewport-based filtering** to load only visible data
 - **Chunked loading** to prevent UI blocking
 - **Canvas rendering** for high-performance marker display
 
-## 📁 Project Structure
+## Project Structure
 
-```
+```text
 can-lmia/
 ├── public/
 │   └── data/
@@ -124,7 +133,7 @@ can-lmia/
 └── package.json
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -147,7 +156,7 @@ DATA_PATH=./public/data/LMIA-DATA
 | `/api/employers` | GET | Get filtered employer data |
 | `/api/available-data` | GET | Get available years/quarters |
 
-## 📊 Data Sources
+## Data Sources
 
 The application processes Canadian Labour Market Impact Assessment data from official government sources:
 
@@ -163,28 +172,31 @@ The application processes Canadian Labour Market Impact Assessment data from off
 3. **Clustering**: Server-side clustering for performance optimization
 4. **API Serving**: RESTful endpoints with viewport filtering
 
-## 🎨 Features Deep Dive
+## Features Deep Dive
 
 ### Interactive Mapping
+
 - **Multi-level Clustering**: Automatic clustering based on zoom level
 - **Performance Optimization**: Web Workers handle clustering calculations
 - **Real-time Filtering**: Viewport-based data loading
 - **Custom Markers**: Program-specific marker styling and colors
 
 ### Statistical Analysis
+
 - **Labor Market Metrics**: Total employers, positions, and LMIAs
 - **Geographic Distribution**: Provincial and territorial breakdowns
 - **Occupation Analysis**: Top occupations and program distributions
 - **Time Series Data**: Quarterly and annual trends
 
 ### Performance Features
+
 - **Server-side Processing**: Efficient data clustering and filtering
 - **Web Workers**: Background processing without UI blocking
 - **Chunked Loading**: Progressive data loading for large datasets
 - **Canvas Rendering**: High-performance marker rendering
 - **Viewport Optimization**: Load only visible data
 
-## 🚀 Deployment
+## Deployment
 
 ### Production Build
 
@@ -212,7 +224,7 @@ EXPOSE 3001
 CMD ["npm", "start"]
 ```
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please follow these steps:
 
@@ -230,26 +242,24 @@ We welcome contributions! Please follow these steps:
 - Add tests for new features
 - Update documentation as needed
 
-## 📝 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Government of Canada** for providing LMIA data
 - **Leaflet** community for excellent mapping tools
 - **React** team for the amazing framework
 - **OpenStreetMap** contributors for map data
 
-## 📞 Support
+## Support
 
-For support, email your-email@example.com or create an issue in this repository.
+For support, [email](info@deadcoast.net) or create an issue in this repository.
 
 ---
 
 <div align="center">
-
-**Built with ❤️ for Canadian Labor Market Analysis**
 
 [Report Bug](https://github.com/yourusername/can-lmia/issues) · [Request Feature](https://github.com/yourusername/can-lmia/issues) · [Documentation](https://github.com/yourusername/can-lmia/wiki)
 
