@@ -57,18 +57,17 @@ function convertServerEmployer(serverEmp: any): EmployerWithApprovals {
 }
 
 // Convert server response to our data format
-function convertServerResponse(response: ServerResponse): { employers: EmployerWithApprovals[]; approvals: LMIAApproval[]; strategy: string; totalAvailable: number } {
+function convertServerResponse(response: ServerResponse): { employers: EmployerWithApprovals[]; approvals: LMIAApproval[]; strategy: string; totalAvailable: number; allEmployers?: EmployerWithApprovals[] } {
   let employers: EmployerWithApprovals[] = [];
   let approvals: LMIAApproval[] = [];
+  let allEmployers: EmployerWithApprovals[] = [];
   
   if (response.type === 'clusters') {
-    // For clusters, we need to create representative employers for each cluster
-    // This allows the map to show cluster locations while maintaining performance
+    // Create cluster representations for map display (performance)
     employers = response.clusters.map((cluster, index) => {
       // Create a representative employer for the cluster
       const representativeEmployer = convertServerEmployer(cluster.points[0]);
       
-      // Modify the representative to show cluster information
       return {
         ...representativeEmployer,
         id: `cluster-${index}`,
@@ -85,11 +84,16 @@ function convertServerResponse(response: ServerResponse): { employers: EmployerW
       } as EmployerWithApprovals & { clusterData?: any };
     });
     
+    // Extract all individual employers for statistics
+    allEmployers = response.clusters.flatMap(cluster => 
+      cluster.points.map(convertServerEmployer)
+    );
+    
     // No dummy approvals - use real data from server
     approvals = [];
   } else if (response.type === 'markers') {
     employers = response.markers.map(convertServerEmployer);
-    
+    allEmployers = employers; // Same data for both
     // No dummy approvals - use real data from server
     approvals = [];
   }
@@ -98,7 +102,8 @@ function convertServerResponse(response: ServerResponse): { employers: EmployerW
     employers,
     approvals,
     strategy: response.strategy,
-    totalAvailable: response.total
+    totalAvailable: response.total,
+    allEmployers
   };
 }
 
@@ -107,7 +112,7 @@ export async function loadServerData(
   year: number, 
   quarter: string, 
   bounds: ViewportBounds
-): Promise<{ employers: EmployerWithApprovals[]; approvals: LMIAApproval[]; strategy: string; totalAvailable: number }> {
+): Promise<{ employers: EmployerWithApprovals[]; approvals: LMIAApproval[]; strategy: string; totalAvailable: number; allEmployers?: EmployerWithApprovals[] }> {
   
   try {
     const params = new URLSearchParams({

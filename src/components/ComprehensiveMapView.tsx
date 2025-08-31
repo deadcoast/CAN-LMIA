@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import { EmployerWithApprovals } from '../types/lmia';
 import ChunkedMarkerLoader from './ChunkedMarkerLoader';
+import MarkerClusterGroup from './MarkerClusterGroup';
 import CanvasMarkerRenderer from './CanvasMarkerRenderer';
 import HeatmapRenderer from './HeatmapRenderer';
 import { useClusteringWorker } from '../hooks/useClusteringWorker';
@@ -49,6 +50,37 @@ const ComprehensiveMapView: React.FC<ComprehensiveMapViewProps> = ({
     setIsWorkerReady(workerReady);
   }, [workerReady]);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (viewportUpdateTimeoutRef.current) {
+        clearTimeout(viewportUpdateTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Throttle viewport updates to prevent infinite loops
+  const viewportUpdateTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  const throttledViewportUpdate = useCallback((bounds: any, zoom: number) => {
+    if (viewportUpdateTimeoutRef.current) {
+      clearTimeout(viewportUpdateTimeoutRef.current);
+    }
+    
+    viewportUpdateTimeoutRef.current = setTimeout(() => {
+      if (onViewportChange) {
+        const viewportBounds = {
+          north: bounds.getNorth(),
+          south: bounds.getSouth(),
+          east: bounds.getEast(),
+          west: bounds.getWest(),
+          zoom: zoom
+        };
+        onViewportChange(viewportBounds);
+      }
+    }, 500); // Throttle to 500ms
+  }, [onViewportChange]);
+
   // Handle zoom changes to switch render modes and trigger viewport updates
   const handleZoomEnd = () => {
     if (mapRef.current) {
@@ -64,34 +96,18 @@ const ComprehensiveMapView: React.FC<ComprehensiveMapViewProps> = ({
         setRenderMode('chunked');
       }
 
-      // Trigger viewport change for server data loading
-      if (onViewportChange) {
-        const bounds = mapRef.current.getBounds();
-        const viewportBounds = {
-          north: bounds.getNorth(),
-          south: bounds.getSouth(),
-          east: bounds.getEast(),
-          west: bounds.getWest(),
-          zoom: currentZoom
-        };
-        onViewportChange(viewportBounds);
-      }
+      // Trigger throttled viewport change for server data loading
+      const bounds = mapRef.current.getBounds();
+      throttledViewportUpdate(bounds, currentZoom);
     }
   };
 
   // Handle map move events
   const handleMoveEnd = () => {
-    if (mapRef.current && onViewportChange) {
+    if (mapRef.current) {
       const bounds = mapRef.current.getBounds();
       const currentZoom = mapRef.current.getZoom();
-      const viewportBounds = {
-        north: bounds.getNorth(),
-        south: bounds.getSouth(),
-        east: bounds.getEast(),
-        west: bounds.getWest(),
-        zoom: currentZoom
-      };
-      onViewportChange(viewportBounds);
+      throttledViewportUpdate(bounds, currentZoom);
     }
   };
 
@@ -131,11 +147,19 @@ const ComprehensiveMapView: React.FC<ComprehensiveMapViewProps> = ({
         
         {/* Render based on current mode */}
         {renderMode === 'chunked' && (
-          <ChunkedMarkerLoader
-            employers={employers}
-            onEmployerSelect={onEmployerSelect}
-            chunkSize={500}
-          />
+          // Use MarkerClusterGroup for individual employers, ChunkedMarkerLoader for cluster data
+          employers.some(emp => emp.id.startsWith('cluster-')) ? (
+            <ChunkedMarkerLoader
+              employers={employers}
+              onEmployerSelect={onEmployerSelect}
+              chunkSize={500}
+            />
+          ) : (
+            <MarkerClusterGroup
+              employers={employers}
+              onEmployerSelect={onEmployerSelect}
+            />
+          )
         )}
         
         {renderMode === 'canvas' && (

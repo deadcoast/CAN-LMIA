@@ -23,6 +23,7 @@ const initialFilters: FilterState = {
 export const useEmployerData = () => {
   const [filters, setFilters] = useState<FilterState>(initialFilters);
   const [employers, setEmployers] = useState<EmployerWithApprovals[]>([]);
+  const [allEmployers, setAllEmployers] = useState<EmployerWithApprovals[]>([]); // For statistics
   // Removed approvals state - using employer data directly
   const [isLoading, setIsLoading] = useState(true); // Start with loading true
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +62,7 @@ export const useEmployerData = () => {
           try {
             const result = await loadServerData(filters.year, filters.quarter, initialBounds);
             setEmployers(result.employers);
+            setAllEmployers(result.allEmployers || result.employers);
             // No approvals to set - using employer data directly
             setRenderStrategy(result.strategy);
             setTotalAvailable(result.totalAvailable);
@@ -71,9 +73,11 @@ export const useEmployerData = () => {
             const { employers: excelEmployers } = await loadLMIAData(filters.year, filters.quarter);
             if (excelEmployers.length > 0) {
               setEmployers(excelEmployers);
+              setAllEmployers(excelEmployers);
               setDataSource('excel');
             } else {
               setEmployers([]);
+              setAllEmployers([]);
               setDataSource('mock');
             }
           }
@@ -84,16 +88,19 @@ export const useEmployerData = () => {
           
           if (excelEmployers.length > 0) {
             setEmployers(excelEmployers);
+            setAllEmployers(excelEmployers);
             setDataSource('excel');
             console.log(`Loaded ${excelEmployers.length} employers from local data`);
           } else {
             setEmployers([]);
+            setAllEmployers([]);
             setDataSource('mock');
           }
         }
       } catch (err) {
         console.error('Failed to initialize data:', err);
         setEmployers([]);
+        setAllEmployers([]);
         setDataSource('mock');
         setError('Failed to load data');
       } finally {
@@ -121,6 +128,7 @@ export const useEmployerData = () => {
       try {
         const result = await loadServerData(filters.year, filters.quarter, bounds);
         setEmployers(result.employers);
+        setAllEmployers(result.allEmployers || result.employers);
         // No approvals to set - using employer data directly
         setRenderStrategy(result.strategy);
         setTotalAvailable(result.totalAvailable);
@@ -142,7 +150,7 @@ export const useEmployerData = () => {
   }, [employers]);
 
   const statistics = useMemo((): Statistics => {
-    const employers = filteredEmployers;
+    const employers = allEmployers; // Use all employers for statistics, not just filtered ones
     
     // Calculate occupation distribution
     const occupationCounts = employers.reduce((acc, emp) => {
@@ -179,7 +187,7 @@ export const useEmployerData = () => {
         .map(([province, count]) => ({ province, count }))
         .sort((a, b) => b.count - a.count)
     };
-  }, [filteredEmployers]);
+  }, [allEmployers]);
 
 
 

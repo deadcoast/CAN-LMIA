@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
+import { Icon } from 'leaflet';
 import { EmployerWithApprovals } from '../types/lmia';
 
 interface MarkerClusterGroupProps {
