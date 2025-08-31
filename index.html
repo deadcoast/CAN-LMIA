@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canadian LMIA Database - Labour Market Impact Assessment Visualization</title>
+    <meta name="description" content="Interactive visualization of Canadian LMIA data showing employers approved to hire foreign workers across Canada." />
+    <style>
+      /* Leaflet marker fix */
+      .leaflet-default-icon-path {
+        background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDOC4xMzQgMiA1IDUuMTM0IDUgOUM1IDEzLjE3IDEyIDIyIDEyIDIyUzE5IDEzLjE3IDE5IDlDMTkgNS4xMzQgMTUuODY2IDIgMTIgMloiIGZpbGw9IiNGMDQ0NEYiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSI5IiByPSIzIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K');
+      }
+      
+      /* Custom slider styles */
+      .slider::-webkit-slider-thumb {
+        appearance: none;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #0F4C75;
+        cursor: pointer;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      
+      .slider::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #0F4C75;
+        cursor: pointer;
+        border: 2px solid white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
