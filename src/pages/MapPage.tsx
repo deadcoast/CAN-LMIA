@@ -6,6 +6,7 @@ import YearSelector from '../components/YearSelector';
 import PerformanceIndicator from '../components/PerformanceIndicator';
 import { useEmployerData } from '../hooks/useEmployerData';
 import { EmployerWithApprovals } from '../types/lmia';
+import { purplePassionTheme } from '../theme/purplePassionTheme';
 
 const MapPage: React.FC = () => {
   const { 
@@ -25,7 +26,10 @@ const MapPage: React.FC = () => {
   const [selectedEmployer, setSelectedEmployer] = useState<EmployerWithApprovals | null>(null);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div 
+      className="min-h-screen"
+      style={{ backgroundColor: purplePassionTheme.backgrounds.primary }}
+    >
       {/* Main Content */}
       <div className="flex h-screen">
         {/* Filter Panel */}
@@ -40,26 +44,52 @@ const MapPage: React.FC = () => {
         <div className={`flex-1 flex flex-col transition-all duration-300 ${showFilters ? 'ml-80' : 'ml-0'}`}>
           {/* Loading State */}
           {isLoading && (
-            <div className="p-4 bg-blue-50 border-b border-blue-200">
+            <div 
+              className="p-4 border-b"
+              style={{ 
+                backgroundColor: purplePassionTheme.backgrounds.surface,
+                borderColor: purplePassionTheme.borders.primary
+              }}
+            >
               <div className="flex items-center justify-center space-x-3">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                <span className="text-blue-700 font-medium">Loading LMIA data...</span>
+                <div 
+                  className="animate-spin rounded-full h-6 w-6 border-b-2"
+                  style={{ borderColor: purplePassionTheme.colors.primary }}
+                ></div>
+                <span 
+                  className="font-medium"
+                  style={{ color: purplePassionTheme.text.primary }}
+                >
+                  Loading LMIA data...
+                </span>
               </div>
             </div>
           )}
 
           {/* Error State */}
           {error && !isLoading && (
-            <div className="p-4 bg-yellow-50 border-b border-yellow-200">
+            <div 
+              className="p-4 border-b"
+              style={{ 
+                backgroundColor: purplePassionTheme.backgrounds.surface,
+                borderColor: purplePassionTheme.borders.primary
+              }}
+            >
               <div className="flex items-center space-x-3">
-                <div className="text-yellow-600">⚠️</div>
-                <span className="text-yellow-700">{error}</span>
+                <div style={{ color: purplePassionTheme.colors.secondary }}>⚠️</div>
+                <span style={{ color: purplePassionTheme.text.primary }}>{error}</span>
               </div>
             </div>
           )}
 
           {/* Controls Bar */}
-          <div className="p-4 bg-white border-b border-gray-200">
+          <div 
+            className="p-4 border-b"
+            style={{ 
+              backgroundColor: purplePassionTheme.backgrounds.card,
+              borderColor: purplePassionTheme.borders.primary
+            }}
+          >
             <div className="flex items-center justify-between">
               <YearSelector
                 selectedYear={filters.year}
@@ -69,20 +99,46 @@ const MapPage: React.FC = () => {
               />
               
               <div className="flex items-center space-x-4">
-                <div className="text-sm text-gray-600">
-                  Showing <span className="font-semibold text-blue-600">{employers.length}</span> employers
+                <div 
+                  className="text-sm"
+                  style={{ color: purplePassionTheme.text.secondary }}
+                >
+                  Showing <span 
+                    className="font-semibold"
+                    style={{ color: purplePassionTheme.colors.primary }}
+                  >
+                    {employers.length}
+                  </span> employers
                   {dataSource === 'server' && (
-                    <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                    <span 
+                      className="ml-2 px-2 py-1 text-xs rounded-full"
+                      style={{ 
+                        backgroundColor: purplePassionTheme.colors.accent,
+                        color: purplePassionTheme.text.primary
+                      }}
+                    >
                       Server Optimized
                     </span>
                   )}
                   {dataSource === 'excel' && (
-                    <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                    <span 
+                      className="ml-2 px-2 py-1 text-xs rounded-full"
+                      style={{ 
+                        backgroundColor: purplePassionTheme.colors.primary,
+                        color: purplePassionTheme.text.primary
+                      }}
+                    >
                       Real Data
                     </span>
                   )}
                   {dataSource === 'mock' && (
-                    <span className="ml-2 px-2 py-1 bg-orange-100 text-orange-800 text-xs rounded-full">
+                    <span 
+                      className="ml-2 px-2 py-1 text-xs rounded-full"
+                      style={{ 
+                        backgroundColor: purplePassionTheme.colors.secondary,
+                        color: purplePassionTheme.text.primary
+                      }}
+                    >
                       Sample Data
                     </span>
                   )}

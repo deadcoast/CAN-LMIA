@@ -2,10 +2,88 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Purple Passion Theme Global Styles */
+:root {
+  --purple-passion-primary: #c6cf6b;
+  --purple-passion-secondary: #d66b81;
+  --purple-passion-accent: #7d87e3;
+  --purple-passion-purple: #71669e;
+  --purple-passion-magenta: #cc70af;
+  --purple-passion-cyan: #7cb4cc;
+  --purple-passion-bg-primary: rgba(91,92,110,1);
+  --purple-passion-bg-card: rgba(91,92,110,0.9);
+  --purple-passion-bg-surface: rgba(91,92,110,0.7);
+  --purple-passion-text-primary: #ffffff;
+  --purple-passion-text-secondary: #cccccc;
+  --purple-passion-border: #cccccc;
+}
+
+/* Apply theme to body and root elements */
+body {
+  background-color: var(--purple-passion-bg-primary) !important;
+  color: var(--purple-passion-text-primary) !important;
+}
+
+/* Theme scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--purple-passion-bg-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--purple-passion-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--purple-passion-primary);
+}
+
 /* Fix Leaflet popup positioning */
 .leaflet-popup-pane,
 .leaflet-popup,
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
   z-index: 9999 !important;
+}
+
+/* Theme Leaflet popups */
+.leaflet-popup-content-wrapper {
+  background-color: var(--purple-passion-bg-card) !important;
+  color: var(--purple-passion-text-primary) !important;
+  border: 1px solid var(--purple-passion-border) !important;
+}
+
+.leaflet-popup-tip {
+  background-color: var(--purple-passion-bg-card) !important;
+  border: 1px solid var(--purple-passion-border) !important;
+}
+
+/* Theme form elements globally */
+input, select, textarea {
+  background-color: var(--purple-passion-bg-surface) !important;
+  color: var(--purple-passion-text-primary) !important;
+  border-color: var(--purple-passion-border) !important;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--purple-passion-text-secondary) !important;
+}
+
+/* Theme buttons globally */
+button {
+  color: var(--purple-passion-text-primary) !important;
+}
+
+/* Theme links */
+a {
+  color: var(--purple-passion-primary) !important;
+}
+
+a:hover {
+  color: var(--purple-passion-secondary) !important;
 }

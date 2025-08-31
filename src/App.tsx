@@ -4,6 +4,8 @@ import Header from './components/Header';
 import MapPage from './pages/MapPage';
 import StatisticsPage from './pages/StatisticsPage';
 import { useEmployerData } from './hooks/useEmployerData';
+import { purplePassionTheme } from './theme/purplePassionTheme';
+import './theme/registerEChartsTheme';
 
 function App() {
   const { 
@@ -16,7 +18,10 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
+      <div 
+        className="min-h-screen"
+        style={{ backgroundColor: purplePassionTheme.backgrounds.primary }}
+      >
         {/* Header */}
         <Header
           searchQuery={filters.search_query}

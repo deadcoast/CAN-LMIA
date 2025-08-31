@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Zap, Database, Eye, Clock } from 'lucide-react';
+import { purplePassionTheme } from '../theme/purplePassionTheme';
 
 interface PerformanceIndicatorProps {
   totalEmployers: number;
@@ -29,28 +30,47 @@ const PerformanceIndicator: React.FC<PerformanceIndicatorProps> = ({
   };
 
   const getPerformanceColor = (ratio: number) => {
-    if (ratio > 0.8) return 'text-red-600';
-    if (ratio > 0.5) return 'text-yellow-600';
-    if (ratio > 0.1) return 'text-green-600';
-    return 'text-blue-600';
+    if (ratio > 0.8) return purplePassionTheme.colors.secondary;
+    if (ratio > 0.5) return purplePassionTheme.colors.magenta;
+    if (ratio > 0.1) return purplePassionTheme.colors.primary;
+    return purplePassionTheme.colors.accent;
   };
 
   const efficiency = totalEmployers > 0 ? (visibleEmployers / totalEmployers) : 0;
   const performanceGain = totalEmployers > 0 ? Math.round((1 - efficiency) * 100) : 0;
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 p-3">
+    <div 
+      className="rounded-lg shadow-md border p-3"
+      style={{ 
+        backgroundColor: purplePassionTheme.backgrounds.card,
+        borderColor: purplePassionTheme.borders.primary
+      }}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <Zap className={`w-4 h-4 ${isLoading ? 'text-yellow-500 animate-pulse' : 'text-green-500'}`} />
-          <span className="text-sm font-medium text-gray-700">
+          <Zap 
+            className={`w-4 h-4 ${isLoading ? 'animate-pulse' : ''}`}
+            style={{ 
+              color: isLoading 
+                ? purplePassionTheme.colors.magenta 
+                : purplePassionTheme.colors.primary 
+            }}
+          />
+          <span 
+            className="text-sm font-medium"
+            style={{ color: purplePassionTheme.text.secondary }}
+          >
             {isLoading ? 'Loading...' : 'Optimized'}
           </span>
         </div>
         
         <button
           onClick={() => setShowDetails(!showDetails)}
-          className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+          className="text-xs font-medium"
+          style={{ 
+            color: purplePassionTheme.colors.accent
+          }}
         >
           {showDetails ? 'Hide' : 'Details'}
         </button>
@@ -60,28 +80,48 @@ const PerformanceIndicator: React.FC<PerformanceIndicatorProps> = ({
         <div className="mt-3 space-y-2 text-xs">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-1">
-              <Database className="w-3 h-3 text-gray-500" />
-              <span className="text-gray-600">Total Data:</span>
+              <Database 
+                className="w-3 h-3" 
+                style={{ color: purplePassionTheme.text.secondary }}
+              />
+              <span style={{ color: purplePassionTheme.text.secondary }}>Total Data:</span>
             </div>
-            <span className="font-medium">{totalEmployers.toLocaleString()}</span>
+            <span 
+              className="font-medium"
+              style={{ color: purplePassionTheme.text.primary }}
+            >
+              {totalEmployers.toLocaleString()}
+            </span>
           </div>
           
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-1">
-              <Eye className="w-3 h-3 text-gray-500" />
-              <span className="text-gray-600">Visible:</span>
+              <Eye 
+                className="w-3 h-3" 
+                style={{ color: purplePassionTheme.text.secondary }}
+              />
+              <span style={{ color: purplePassionTheme.text.secondary }}>Visible:</span>
             </div>
-            <span className={`font-medium ${getPerformanceColor(efficiency)}`}>
+            <span 
+              className="font-medium"
+              style={{ color: getPerformanceColor(efficiency) }}
+            >
               {visibleEmployers.toLocaleString()}
             </span>
           </div>
           
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-1">
-              <Zap className="w-3 h-3 text-gray-500" />
-              <span className="text-gray-600">Strategy:</span>
+              <Zap 
+                className="w-3 h-3" 
+                style={{ color: purplePassionTheme.text.secondary }}
+              />
+              <span style={{ color: purplePassionTheme.text.secondary }}>Strategy:</span>
             </div>
-            <span className="font-medium text-blue-600">
+            <span 
+              className="font-medium"
+              style={{ color: purplePassionTheme.colors.accent }}
+            >
               {getStrategyDescription(strategy)}
             </span>
           </div>
@@ -89,19 +129,31 @@ const PerformanceIndicator: React.FC<PerformanceIndicatorProps> = ({
           {loadTime && (
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-1">
-                <Clock className="w-3 h-3 text-gray-500" />
-                <span className="text-gray-600">Load Time:</span>
+                <Clock 
+                  className="w-3 h-3" 
+                  style={{ color: purplePassionTheme.text.secondary }}
+                />
+                <span style={{ color: purplePassionTheme.text.secondary }}>Load Time:</span>
               </div>
-              <span className="font-medium text-green-600">
+              <span 
+                className="font-medium"
+                style={{ color: purplePassionTheme.colors.primary }}
+              >
                 {loadTime}ms
               </span>
             </div>
           )}
           
-          <div className="pt-2 border-t border-gray-100">
+          <div 
+            className="pt-2 border-t"
+            style={{ borderColor: purplePassionTheme.borders.primary }}
+          >
             <div className="flex items-center justify-between">
-              <span className="text-gray-600">Performance Gain:</span>
-              <span className="font-bold text-green-600">
+              <span style={{ color: purplePassionTheme.text.secondary }}>Performance Gain:</span>
+              <span 
+                className="font-bold"
+                style={{ color: purplePassionTheme.colors.primary }}
+              >
                 {performanceGain}% faster
               </span>
             </div>
