@@ -29,14 +29,7 @@ The LMIA Database is a sophisticated web application designed to visualize and a
 - **One-Command Startup**: Automated scripts for easy development setup
 - **Cross-Platform**: Works seamlessly on macOS, Linux, and Windows
 
-## Screenshots
-
-### Interactive Map View
-
-![LMIA Database Homepage](assets/LMIAhome.png)
-*Interactive map showing clustered employer data across Canada with real-time performance metrics*
-
-### Statistical Dashboard
+## Graph View Statistics per Database
 
 ![LMIA Statistics Dashboard](assets/LMIAgraph.png)
 *Comprehensive statistics dashboard featuring labor market analytics, occupation distributions, and provincial breakdowns*
