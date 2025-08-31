@@ -18,7 +18,7 @@
 
 The LMIA Database is a sophisticated web application designed to visualize and analyze Canadian Labour Market Impact Assessment data. Built with modern web technologies, it provides interactive mapping capabilities, comprehensive statistical analysis, and real-time data processing for over **17,000+ employers** across Canada.
 
-### 🎯 Key Features
+### Key Features
 
 - **Interactive Mapping**: Real-time visualization of employer locations with advanced clustering
 - **Statistical Dashboard**: Comprehensive analytics with charts and data visualizations  
@@ -86,7 +86,7 @@ npm start
 npm run dev
 ```
 
-## 🚀 Automated Startup Features
+## Automated Startup Features
 
 The project includes powerful startup scripts that handle everything automatically:
 
@@ -251,24 +251,6 @@ The application processes Canadian Labour Market Impact Assessment data from off
 - **Viewport Optimization**: Load only visible data
 - **Throttled Updates**: Prevents excessive API calls
 
-## Development
-
-### Code Quality
-
-- **TypeScript**: Full type safety throughout the application
-- **ESLint**: Code linting with React and TypeScript rules
-- **Prettier**: Consistent code formatting
-- **Error Handling**: Comprehensive error handling and logging
-
-### Recent Improvements
-
-- ✅ **Automated Startup Scripts**: One-command development setup
-- ✅ **Popup Z-Index Fix**: Resolved Leaflet popup layering issues
-- ✅ **TypeScript Error Resolution**: Fixed all compilation errors
-- ✅ **Performance Optimization**: Improved map rendering and data loading
-- ✅ **Cross-Platform Support**: Works on macOS, Linux, and Windows
-- ✅ **Comprehensive Logging**: Detailed logs for debugging
-
 ## Deployment
 
 ### Production Build
@@ -339,14 +321,6 @@ We welcome contributions! Please follow these steps:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- **Government of Canada** for providing LMIA data
-- **Leaflet** community for excellent mapping tools
-- **React** team for the amazing framework
-- **OpenStreetMap** contributors for map data
-- **Vite** team for the fast build tool
 
 ## Support
 
