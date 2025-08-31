@@ -21,6 +21,7 @@ The LMIA Database is a sophisticated web application designed to visualize and a
 ### Key Features
 
 - **Interactive Mapping**: Real-time visualization of employer locations with advanced clustering
+- **Canadian Geographic Names Integration**: Accurate geocoding using official Canadian Geographic Names Database (25,228+ locations)
 - **Statistical Dashboard**: Comprehensive analytics with charts and data visualizations  
 - **High Performance**: Optimized for handling large datasets with Web Workers and server-side processing
 - **Advanced Filtering**: Search and filter by location, occupation, program type, and time period
@@ -28,6 +29,7 @@ The LMIA Database is a sophisticated web application designed to visualize and a
 - **Real-time Updates**: Dynamic data loading with viewport-based optimization
 - **One-Command Startup**: Automated scripts for easy development setup
 - **Cross-Platform**: Works seamlessly on macOS, Linux, and Windows
+- **Intelligent Caching**: In-memory geocoding cache for fast coordinate lookups
 
 ## Graph View Statistics per Database
 
@@ -96,7 +98,8 @@ The project includes powerful startup scripts that handle everything automatical
 - **Health Monitoring**: Waits for both servers to be ready
 - **Auto-Open Browser**: Opens the application automatically
 - **Comprehensive Logging**: Creates detailed log files for debugging
-- ✅**Clean Shutdown**: Properly stops all processes on exit
+- **Clean Shutdown**: Properly stops all processes on exit
+- **Canadian Geo Names Loading**: Automatically loads and indexes the Canadian Geographic Names Database at startup
 
 For detailed startup information, see [STARTUP.md](STARTUP.md).
 
@@ -117,6 +120,8 @@ For detailed startup information, see [STARTUP.md](STARTUP.md).
 - **Node.js** with Express.js for API server
 - **XLSX** for Excel file processing
 - **CORS** enabled for cross-origin requests
+- **Canadian Geographic Names Database** integration for accurate geocoding
+- **In-memory caching** for optimized geocoding performance
 
 ### Performance Optimizations
 
@@ -126,6 +131,8 @@ For detailed startup information, see [STARTUP.md](STARTUP.md).
 - **Chunked loading** to prevent UI blocking
 - **Canvas rendering** for high-performance marker display
 - **Throttled updates** to prevent infinite API loops
+- **Pre-loaded geocoding database** for instant coordinate lookups
+- **Intelligent caching system** for geocoding results
 
 ## Project Structure
 
@@ -133,7 +140,8 @@ For detailed startup information, see [STARTUP.md](STARTUP.md).
 can-lmia/
 ├── public/
 │   └── data/
-│       └── LMIA-DATA/           # Excel data files by year/quarter
+│       ├── LMIA-DATA/           # Excel data files by year/quarter
+│       └── CAN_GEO_NAMES/       # Canadian Geographic Names Database
 ├── src/
 │   ├── components/              # React components
 │   │   ├── ComprehensiveMapView.tsx    # Main map component
@@ -158,7 +166,8 @@ can-lmia/
 │   │   └── lmia.ts                    # Core data types
 │   ├── utils/                   # Utility functions
 │   │   ├── LMIAMapManager.ts          # Map management
-│   │   └── excelReader.ts             # Excel processing
+│   │   ├── excelReader.ts             # Excel processing
+│   │   └── geocoding.ts               # Canadian Geographic Names integration
 │   └── pages/                   # Page components
 │       ├── MapPage.tsx                # Main map page
 │       └── StatisticsPage.tsx         # Statistics page
@@ -215,13 +224,26 @@ The application processes Canadian Labour Market Impact Assessment data from off
 - **Records**: 17,839+ employers
 - **Fields**: Employer details, locations, positions, programs, occupations
 
+### Canadian Geographic Names Database
+
+The application integrates with the official Canadian Geographic Names Database for accurate geocoding:
+
+- **Source**: Government of Canada Geographic Names Database
+- **Locations**: 25,228+ indexed populated places across Canada
+- **Coverage**: All provinces and territories
+- **Place Types**: Cities, towns, municipalities, villages, communities, and more
+- **Priority System**: Intelligent matching based on place type and relevance
+- **Performance**: Pre-loaded at startup with in-memory indexing for instant lookups
+
 ### Data Processing Pipeline
 
 1. **Excel Parsing**: XLSX library processes government Excel files
-2. **Geocoding**: Address-to-coordinates conversion for mapping
-3. **Clustering**: Server-side clustering for performance optimization
-4. **API Serving**: RESTful endpoints with viewport filtering
-5. **Real-time Updates**: Dynamic data loading based on map viewport
+2. **Canadian Geographic Names Integration**: Pre-loaded database with 25,228+ locations for accurate geocoding
+3. **Intelligent Geocoding**: Priority-based matching using official Canadian place names
+4. **Clustering**: Server-side clustering for performance optimization
+5. **API Serving**: RESTful endpoints with viewport filtering
+6. **Real-time Updates**: Dynamic data loading based on map viewport
+7. **Caching**: In-memory cache for geocoding results and database indexing
 
 ## Features Deep Dive
 
@@ -233,6 +255,8 @@ The application processes Canadian Labour Market Impact Assessment data from off
 - **Custom Markers**: Program-specific marker styling and colors
 - **Popup System**: Native Leaflet popups with proper z-index handling
 - **Heat Map Mode**: Density visualization for large datasets
+- **Accurate Geocoding**: Canadian Geographic Names Database integration for precise location mapping
+- **Intelligent Place Matching**: Priority-based selection of best location matches
 
 ### Statistical Analysis
 
@@ -250,6 +274,8 @@ The application processes Canadian Labour Market Impact Assessment data from off
 - **Canvas Rendering**: High-performance marker rendering
 - **Viewport Optimization**: Load only visible data
 - **Throttled Updates**: Prevents excessive API calls
+- **Pre-loaded Geocoding Database**: 25,228+ locations indexed at startup for instant lookups
+- **Intelligent Caching**: Multi-level caching system for geocoding results
 
 ## Deployment
 
@@ -287,6 +313,8 @@ CMD ["npm", "start"]
 2. **Dependencies Issues**: Run `npm install` to resolve
 3. **Server Won't Start**: Check `server.log` for detailed error messages
 4. **Map Not Loading**: Verify both frontend and backend servers are running
+5. **Canadian Geo Names Loading**: The database loads at startup - initial startup may take a few extra seconds
+6. **Geocoding Performance**: First-time geocoding may be slower, but results are cached for subsequent requests
 
 ### Log Files
 
